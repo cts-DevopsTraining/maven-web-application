@@ -1,6 +1,12 @@
 node{
 
-//We have give SCM changes in inside Node level only
+//We have to keep variables to display only inside node level
+
+echo "The job name is : " ${env.JOB_NAME}
+echo "The Node name is : " ${env.NODE_NAME}
+echo "The build number is : " ${env.BUILD_NUMBER}
+
+//We have give SCM changes in inside node level only
 
 properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), [$class: 'JobLocalConfiguration', changeReasonComment: ''], pipelineTriggers([pollSCM('* * * * *')])])
 
