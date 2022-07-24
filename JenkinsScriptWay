@@ -1,0 +1,40 @@
+node{
+
+//We have give SCM changes in inside Node level only
+
+properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), [$class: 'JobLocalConfiguration', changeReasonComment: ''], pipelineTriggers([pollSCM('* * * * *')])])
+
+def mavenHome= tool name: "maven3.8.4"
+
+stage('CheckOutCodeGit')
+{
+git branch: 'development', credentialsId: '1b7556db-d21f-4936-8055-026a19859eed', url: 'https://github.com/cts-DevopsTraining/maven-web-application.git'
+}
+
+stage('Build')
+{
+sh "${mavenHome}/bin/mvn clean package"
+}
+
+/*
+stage('ExecuteSonarQubeReport')
+{
+sh "${mavenHome}/bin/mvn sonar:sonar"
+}
+
+stage('UploadArtifatcsIntoNexus')
+{
+sh "${mavenHome}/bin/mvn deploy"
+}
+
+stage('DeployAppintoTomcat')
+{
+
+sshagent(['29e2818e-773b-41ee-ab4f-1cde83020bf5']) 
+ {
+    sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@172.31.46.77:/opt/apache-tomcat-9.0.63/webapps"
+ }
+}
+
+*/
+} // node closing
