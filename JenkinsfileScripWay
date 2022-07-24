@@ -12,6 +12,8 @@ properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKe
 
 def mavenHome= tool name: "maven3.8.4"
 
+try
+{
 stage('CheckOutCodeGit')
 {
 git branch: 'development', credentialsId: '1b7556db-d21f-4936-8055-026a19859eed', url: 'https://github.com/cts-DevopsTraining/maven-web-application.git'
@@ -43,4 +45,46 @@ sshagent(['29e2818e-773b-41ee-ab4f-1cde83020bf5'])
 }
 
 */
+} // try block closing
+catch(e)
+{
+currentBuild.result = "FAILED"
+   throw e
+} //Catch block closing
+
+finally
+{
+SendSlackNotifications(currentBuild.result)
+} //Finally block closing
+
+
 } // node closing
+
+//sending slack notification
+def SendSlackNotifications(String buildStatus = 'STARTED') {
+  // build status of null means successful
+  buildStatus =  buildStatus ?: 'SUCCESSFUL'
+
+  // Default values
+  def colorName = 'RED'
+  def colorCode = '#FF0000'
+  def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
+  def summary = "${subject} (${env.BUILD_URL})"
+
+  // Override default values based on build status
+  if (buildStatus == 'STARTED') {
+    color = 'YELLOW'
+    colorCode = '#FFFF00'
+  } else if (buildStatus == 'SUCCESSFUL') {
+    color = 'GREEN'
+    colorCode = '#00FF00'
+  } else {
+    color = 'RED'
+    colorCode = '#FF0000'
+  }
+
+  // Send notifications
+  slackSend (color: colorCode, message: summary)
+}
+
+
