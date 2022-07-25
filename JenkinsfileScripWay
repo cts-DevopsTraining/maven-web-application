@@ -1,4 +1,4 @@
-node{
+node('nodes'){
 
 //We have to keep variables to display only inside node level
 
