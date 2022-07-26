@@ -1,3 +1,6 @@
+@Library('SharedLibScript') _
+// we are using above command via sharedlibraries
+
 node('nodes'){
 
 //We have to keep variables to display only inside node level
@@ -14,7 +17,7 @@ def mavenHome= tool name: "maven3.8.4"
 
 try
 {
-SendSlackNotifications('STARTED')
+sendSlackNotifications('STARTED')
 stage('CheckOutCodeGit')
 {
 git branch: 'development', credentialsId: '1b7556db-d21f-4936-8055-026a19859eed', url: 'https://github.com/cts-DevopsTraining/maven-web-application.git'
@@ -59,7 +62,7 @@ currentBuild.result = "FAILED"
 
 finally
 {
-SendSlackNotifications(currentBuild.result)
+sendSlackNotifications(currentBuild.result)
 } //Finally block closing
 
 
